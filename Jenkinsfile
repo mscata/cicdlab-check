@@ -8,12 +8,12 @@ node {
     }
     stage('Check Build Tools') {
         parallel(
-            "Java": {
+            'Java': {
                 stage('Java') {
                     sh 'java --version'
                 }
             },
-            "Maven": {
+            'Maven': {
                 stage('Maven') {
                     def toolLocation = tool 'Maven'
                     withEnv(["MVN_HOME=$toolLocation"]) {
@@ -21,7 +21,7 @@ node {
                     }
                 }
             },
-            "Gradle": {
+            'Gradle': {
                 stage('Check Gradle') {
                     def toolLocation = tool 'Gradle'
                     withEnv(["GRADLE_HOME=$toolLocation"]) {
@@ -29,7 +29,7 @@ node {
                     }
                 }
             },
-            "NPM": {
+            'NPM': {
                 stage('NPM') {
                     toolLocation = "$toolsDir/nvm/versions/node/v20.12.1"
                     withEnv(["PATH=$PATH:$toolLocation/bin"]) {
@@ -41,13 +41,13 @@ node {
     }
     stage('Check Publishing Capabilities') {
         parallel(
-            "Liquibase": {
+            'Liquibase': {
                 stage('Liquibase') {
                     def toolLocation = "$toolsDir/liquibase-4.26.0"
                     sh "$toolLocation/liquibase --version"
                 }
             },
-            "Nexus": {
+            'Nexus': {
                 stage('Nexus') {
                     echo "!!! TODO !!!"
                 }
@@ -56,20 +56,20 @@ node {
     }
     stage('Check Scanning Tools') {
         parallel(
-            "Dependency Check": {
+            'Dependency Check': {
                 stage('Dependency Check') {
                     echo 'Dependency Check is used to find vulnerabilities in open source dependencies'
                     def toolLocation = tool 'Dependency Check'
                     sh "$toolLocation/bin/dependency-check.sh --version"
                 }
             },
-            "Trivy:" {
+            'Trivy': {
                 stage('Trivy') {
                     echo 'Trivy is used to find vulnerabilities in container images'
                     sh 'trivy --version'
                 }
             },
-            "Gitleaks": {
+            'Gitleaks': {
                 stage('Gitleaks') {
                     echo 'Gitleaks is used to find secrets that should not be committed to the code repository'
                     sh 'gitleaks version'
