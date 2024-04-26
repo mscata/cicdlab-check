@@ -1,5 +1,6 @@
 node {
     def toolsDir = '/home/jenkins/tools'
+    def discordWebHookUrl = 'https://discord.com/api/webhooks/1233451596676071527/iomVt3QPH4WLnWAO2hLmdKmW_QT-HgQpPyiQpxAWGic3wmztObLis33tHmPygCPbDX-_'
     stage('Check Git') {
         sh 'git --version'
     }
@@ -74,7 +75,16 @@ node {
             }
         )
     }
-    stage('NodeJS') {
-        sh '. ~/.profile && node --version'
+    stage('Check Notification Capabilities') {
+        parallel(
+            stage('Discord') {
+                discordSend description: currentBuild.fullDisplayName,
+                    footer: "Marco's CI/CD Labs",
+                    link: "",
+                    result: currentBuild.currentResult,
+                    title: env.JOB_NAME,
+                    webhookURL: discordWebHookUrl
+            }
+        )
     }
 }
