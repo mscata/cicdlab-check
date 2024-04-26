@@ -31,10 +31,7 @@ node {
             },
             'NPM': {
                 stage('NPM') {
-                    toolLocation = "$toolsDir/nvm/versions/node/v20.12.1"
-                    withEnv(["PATH=$PATH:$toolLocation/bin"]) {
-                        sh 'npm --version'
-                    }
+                    sh '. ~/.profile && npm --version'
                 }
             }
         )
@@ -78,9 +75,6 @@ node {
         )
     }
     stage('NodeJS') {
-        toolLocation = "$toolsDir/nvm/versions/node/v20.12.1"
-        withEnv(["PATH=$PATH:$toolLocation/bin"]) {
-            sh 'node --version'
-        }
+        sh '. ~/.profile && node --version'
     }
 }
