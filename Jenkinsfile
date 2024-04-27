@@ -77,13 +77,15 @@ node {
     }
     stage('Check Notification Capabilities') {
         parallel(
-            stage('Discord') {
-                discordSend description: currentBuild.fullDisplayName,
-                    footer: "Marco's CI/CD Labs",
-                    link: "",
-                    result: currentBuild.currentResult,
-                    title: env.JOB_NAME,
-                    webhookURL: discordWebHookUrl
+            'Discord': {
+                stage('Discord') {
+                    discordSend description: "Build Notification Testing",
+                        footer: "Marco's CI/CD Lab",
+                        link: "",
+                        result: currentBuild.currentResult,
+                        title: currentBuild.fullDisplayName,
+                        webhookURL: discordWebHookUrl
+                }
             }
         )
     }
