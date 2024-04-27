@@ -80,7 +80,7 @@ node {
         parallel(
             'Discord': {
                 stage('Discord') {
-                    discordSend description: "Build Notification Testing",
+                    discordSend description: "Build Notification Testing _(Builder ${env.HOSTNAME})_",
                         footer: "Marco's CI/CD Lab",
                         link: "",
                         result: currentBuild.currentResult,
