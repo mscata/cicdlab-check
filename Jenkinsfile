@@ -1,6 +1,7 @@
 node {
     def toolsDir = '/home/jenkins/tools'
     def discordWebHookUrl = 'https://discord.com/api/webhooks/1233451596676071527/iomVt3QPH4WLnWAO2hLmdKmW_QT-HgQpPyiQpxAWGic3wmztObLis33tHmPygCPbDX-_'
+    sh 'printenv | sort -h'
     stage('Check Git') {
         sh 'git --version'
     }
