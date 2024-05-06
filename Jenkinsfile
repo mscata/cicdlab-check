@@ -47,8 +47,23 @@ node {
                 }
             },
             'Nexus': {
-                stage('Nexus') {
-                    echo "!!! TODO !!!"
+                stage('Nexus Maven') {
+                    def toolLocation = tool 'Maven'
+                    sh 'echo test > test.jar'
+                    withEnv(["MVN_HOME=$toolLocation"]) {
+                        sh '"$MVN_HOME/bin/mvn" deploy:deploy-profile
+                        -DgroupId=org.cicdlabs
+                        -DartifactId=test
+                        -Dversion=0.0.0
+                        -Dfile=test.jar
+                        -Dpackaging=jar
+                        -DgeneratePom=true
+                        -DrepositoryId=cicdlab
+                        -DrepositoryUrl=http://artifactsrepo:8081/nexus/repository/maven-public/'
+                    }
+                    sh 'curl -X DELETE
+                        http://artifactsrepo:8081/nexus/service/rest/v1/components/org.cicdlabs%3Atest%3A0.0.0
+                        -H "accept: application/json"'
                 }
             }
         )
