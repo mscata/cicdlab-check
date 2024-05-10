@@ -44,16 +44,25 @@ node {
                 stage('Liquibase') {
                     def toolLocation = "$toolsDir/liquibase-4.26.0"
                     sh "$toolLocation/liquibase --version"
+                    echo "Testing Postgres connection"
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'POSTGRES_CREDENTIALS', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']) {
+                        wrap([$class: 'MaskPasswordBuildWrapper', varPasswordPairs: [[password: "$PASSWORD"]) {
+                            sh "$toolLocation/liquibase execute-sql --username $USERNAME --password $PASSWORD --sql='SELECT NOW()' --url=jdbc:postgresql://dbserver:5432/postgres"
+                        }
+                    }
                 }
             },
             'Nexus': {
                 stage('Nexus Maven') {
                     def toolLocation = tool 'Maven'
-                    sh 'echo test > test.jar'
+                    echo "Testing connection to Maven Central"
                     withEnv(["MVN_HOME=$toolLocation"]) {
-                        sh '"$MVN_HOME/bin/mvn" deploy:deploy-file -DgroupId=org.cicdlabs -DartifactId=test -Dversion=0.0.0 -Dfile=test.jar -Dpackaging=jar -DgeneratePom=true -DrepositoryId=cicdlab -Durl=http://artifactsrepo:8081/nexus/repository/maven-public/'
+                        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'POSTGRES_CREDENTIALS', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']) {
+                            wrap([$class: 'MaskPasswordBuildWrapper', varPasswordPairs: [[password: env.PASSWORD]) {
+                                sh '"$MVN_HOME/bin/mvn" dependency:get -Dartifact=org.apache.maven.plugins:maven-surefire-plugin:3.2.5 -Drepo.user=$USERNAME -Drepo.password=$PASSWORD'
+                            }
+                        }
                     }
-                    sh 'curl -X DELETE http://artifactsrepo:8081/nexus/service/rest/v1/components/org.cicdlabs%3Atest%3A0.0.0 -H "accept: application/json"'
                 }
             }
         )
@@ -69,7 +78,7 @@ node {
             },
             'Trivy': {
                 stage('Trivy') {
-                    echo 'Trivy is used to find vulnerabilities in container images'
+                    echo 'Trivy is used to find vulnerabilities in code, dependencies, and container images'
                     sh 'trivy --version'
                 }
             },
