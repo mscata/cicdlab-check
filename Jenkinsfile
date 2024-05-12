@@ -59,7 +59,7 @@ node {
                     withEnv(["MVN_HOME=$toolLocation"]) {
                         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'POSTGRES_CREDENTIALS', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                             wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: env.PASSWORD]]]) {
-                                sh '"$MVN_HOME/bin/mvn" dependency:get -Dartifact=org.apache.maven.plugins:maven-surefire-plugin:3.2.5 -Drepo.user=$USERNAME -Drepo.password=$PASSWORD'
+                                sh '"$MVN_HOME/bin/mvn" dependency:get -Dartifact=log4j:log4j:1.2.17 -Drepo.user=$USERNAME -Drepo.password=$PASSWORD'
                             }
                         }
                     }
