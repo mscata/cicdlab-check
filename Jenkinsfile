@@ -46,7 +46,7 @@ node {
                     sh "$toolLocation/liquibase --version"
                     echo "Testing Postgres connection"
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'POSTGRES_CREDENTIALS', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                        wrap([$class: 'MaskPasswordBuildWrapper', varPasswordPairs: [[password: "$PASSWORD"]]]) {
+                        wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: "$PASSWORD"]]]) {
                             sh "$toolLocation/liquibase execute-sql --username $USERNAME --password $PASSWORD --sql='SELECT NOW()' --url=jdbc:postgresql://dbserver:5432/postgres"
                         }
                     }
@@ -58,7 +58,7 @@ node {
                     echo "Testing connection to Maven Central"
                     withEnv(["MVN_HOME=$toolLocation"]) {
                         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'POSTGRES_CREDENTIALS', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                            wrap([$class: 'MaskPasswordBuildWrapper', varPasswordPairs: [[password: env.PASSWORD]]]) {
+                            wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: env.PASSWORD]]]) {
                                 sh '"$MVN_HOME/bin/mvn" dependency:get -Dartifact=org.apache.maven.plugins:maven-surefire-plugin:3.2.5 -Drepo.user=$USERNAME -Drepo.password=$PASSWORD'
                             }
                         }
