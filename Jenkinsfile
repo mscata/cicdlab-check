@@ -56,11 +56,7 @@ node {
                     def toolLocation = tool 'Maven'
                     echo "Testing connection to Maven Central"
                     withEnv(["MVN_HOME=$toolLocation"]) {
-                        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'POSTGRES_CREDENTIALS', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                            wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: env.PASSWORD]]]) {
-                                sh '"$MVN_HOME/bin/mvn" dependency:3.6.0:get -Dartifact=org.apache.maven.plugins:maven-dependency-plugin:3.6.0 -Drepo.user=$USERNAME -Drepo.password=$PASSWORD'
-                            }
-                        }
+                        sh '"$MVN_HOME/bin/mvn" dependency:3.6.0:get -Dartifact=org.apache.maven.plugins:maven-dependency-plugin:3.6.0 -Drepo.user=$USERNAME -Drepo.password=$PASSWORD'
                     }
                 }
             }
