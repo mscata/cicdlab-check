@@ -43,10 +43,9 @@ node {
             'Liquibase': {
                 stage('Liquibase') {
                     def toolLocation = "$toolsDir/liquibase-4.26.0"
-                    sh "$toolLocation/liquibase --version"
                     echo "Testing Postgres connection"
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'POSTGRES_CREDENTIALS', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                        wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: "$PASSWORD"]]]) {
+                        wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: env.PASSWORD]]]) {
                             sh "$toolLocation/liquibase execute-sql --username $USERNAME --password $PASSWORD --sql='SELECT NOW()' --url=jdbc:postgresql://dbserver:5432/postgres"
                         }
                     }
@@ -59,7 +58,7 @@ node {
                     withEnv(["MVN_HOME=$toolLocation"]) {
                         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'POSTGRES_CREDENTIALS', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                             wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: env.PASSWORD]]]) {
-                                sh '"$MVN_HOME/bin/mvn" dependency:get -Dartifact=log4j:log4j:1.2.17 -Drepo.user=$USERNAME -Drepo.password=$PASSWORD'
+                                sh '"$MVN_HOME/bin/mvn" dependency:3.6.0:get -Dartifact=org.apache.maven.plugins:maven-dependency-plugin:3.6.0 -Drepo.user=$USERNAME -Drepo.password=$PASSWORD'
                             }
                         }
                     }
