@@ -38,11 +38,11 @@ node {
             }
         )
     }
-    stage('Check Publishing Capabilities') {
+    stage('Check DB Migration Capabilities') {
         parallel(
             'Liquibase': {
                 stage('Liquibase') {
-                    def toolLocation = "$toolsDir/liquibase-4.26.0"
+                    def toolLocation = "$toolsDir/liquibase-4.29.2"
                     echo "Testing Postgres connection"
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'POSTGRES_CREDENTIALS', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                         wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: env.PASSWORD]]]) {
@@ -50,7 +50,11 @@ node {
                         }
                     }
                 }
-            },
+            }
+        }
+    }
+    stage('Check Artifact Publishing Capabilities') {
+        parallel(
             'Nexus': {
                 stage('Nexus Maven') {
                     def toolLocation = tool 'Maven'
