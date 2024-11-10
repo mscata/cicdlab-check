@@ -47,8 +47,8 @@ node {
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'POSTGRES_CREDENTIALS', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                         wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: env.PASSWORD]]]) {
                             retry(3) {
-                                sh "$toolLocation/liquibase execute-sql --username $USERNAME --password $PASSWORD --sql='SELECT NOW()' --url=jdbc:postgresql://dbserver:5432/postgres"
                                 sleep(time: 10, unit: 'SECONDS')
+                                sh "$toolLocation/liquibase execute-sql --username $USERNAME --password $PASSWORD --sql='SELECT NOW()' --url=jdbc:postgresql://dbserver:5432/postgres"
                             }
                         }
                     }
