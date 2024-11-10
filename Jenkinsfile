@@ -51,7 +51,7 @@ node {
                     }
                 }
             }
-        }
+        )
     }
     stage('Check Artifact Publishing Capabilities') {
         parallel(
