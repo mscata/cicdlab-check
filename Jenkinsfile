@@ -63,7 +63,10 @@ node {
                     def toolLocation = tool 'Maven'
                     echo "Testing connection to Maven Central"
                     withEnv(["MVN_HOME=$toolLocation"]) {
-                        sh '"$MVN_HOME/bin/mvn" dependency:3.8.1:get -Dartifact=org.apache.maven.plugins:maven-dependency-plugin:3.8.1 -Drepo.user=$USERNAME -Drepo.password=$PASSWORD'
+                        retry(3) {
+                            sleep(time: 10, unit: 'SECONDS')
+                            sh '"$MVN_HOME/bin/mvn" dependency:get -Dartifact=org.apache.maven.plugins:maven-dependency-plugin:3.7.0 -Drepo.user=$USERNAME -Drepo.password=$PASSWORD'
+                        }
                     }
                 }
             }
